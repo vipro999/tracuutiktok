@@ -27,7 +27,7 @@
       if (!username) return alert("Vui lòng nhập username!");
       document.getElementById("result").innerHTML = "⏳ Đang lấy dữ liệu...";
 
-      const WORKER_URL = "https://patient-tree-0be5.son92qb.workers.dev"; // <-- Thay bằng URL Worker thật của bạn
+      const WORKER_URL = "https://patient-tree-0be5.son92qb.workers.dev/"; // <-- Thay bằng URL Worker thật
 
       try {
         const res = await fetch(`${WORKER_URL}/?username=${username}`);
@@ -48,6 +48,8 @@
           <h3>${user.nickname}</h3>
           <p>@${user.uniqueId}</p>
           <p>👥 Followers: <b>${Number(stats.followerCount).toLocaleString()}</b></p>
+          <p>❤️ Likes: <b>${Number(stats.heartCount).toLocaleString()}</b></p>
+          <p>🎬 Videos: <b>${Number(stats.videoCount).toLocaleString()}</b></p>
         `;
       } catch (e) {
         console.error(e);
