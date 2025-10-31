@@ -27,7 +27,7 @@
       if (!username) return alert("Vui lòng nhập username!");
       document.getElementById("result").innerHTML = "⏳ Đang lấy dữ liệu...";
 
-      const WORKER_URL = "https://patient-tree-0be5.son92qb.workers.dev/"; // <-- Thay bằng URL Worker thật
+      const WORKER_URL = "https://patient-tree-0be5.son92qb.workers.dev"; // <-- Thay bằng URL Worker thật
 
       try {
         const res = await fetch(`${WORKER_URL}/?username=${username}`);
@@ -59,3 +59,4 @@
   </script>
 </body>
 </html>
+
