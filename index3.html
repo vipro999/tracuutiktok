@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Tra cứu TikTok Info</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 40px; }
+    input { padding: 10px; width: 250px; border-radius: 8px; border: 1px solid #ccc; }
+    button { padding: 10px 16px; border: none; background: #000; color: #fff; border-radius: 8px; cursor: pointer; }
+    button:hover { background: #333; }
+    #result { margin-top: 30px; }
+    img { border-radius: 50%; width: 120px; height: 120px; object-fit: cover; }
+    .card { display: inline-block; padding: 20px; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+  <h2>🔍 Tra cứu thông tin TikTok</h2>
+  <p>Nhập username TikTok (ví dụ: <b>oanhl5058</b>)</p>
+
+  <input id="username" placeholder="Nhập username...">
+  <button onclick="getTikTokInfo()">Lấy thông tin</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function getTikTokInfo() {
+      const username = document.getElementById('username').value.trim();
+      if (!username) return alert('Vui lòng nhập username!');
+
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '⏳ Đang lấy dữ liệu...';
+
+      try {
+        // 🔹 Worker URL của bạn
+        const workerUrl = 'https://patient-tree-0be5.son92qb.workers.dev';
+        const res = await fetch(`${workerUrl}?username=${encodeURIComponent(username)}`);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+
+        const data = await res.json();
+        if (!data.userInfo || !data.userInfo.user) {
+          resultDiv.innerHTML = '⚠️ Không tìm thấy người dùng!';
+          return;
+        }
+
+        const user = data.userInfo.user;
+
+        resultDiv.innerHTML = `
+          <div class="card">
+            <img src="${user.avatarMedium}" alt="avatar"><br>
+            <h3>${user.nickname}</h3>
+            <p>@${user.uniqueId}</p>
+            <p>👥 Followers: <b>${parseInt(user.stats.followerCount).toLocaleString()}</b></p>
+          </div>
+        `;
+      } catch (err) {
+        console.error(err);
+        resultDiv.innerHTML = '⚠️ Có lỗi xảy ra, vui lòng thử lại!';
+      }
+    }
+  </script>
+</body>
+</html>
