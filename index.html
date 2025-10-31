@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Tra cứu TikTok Info</title>
+  <meta charset="UTF-8" />
+  <title>Tra cứu TikTok</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 40px; }
+    body { font-family: sans-serif; text-align: center; padding: 40px; background: #f9f9f9; }
     input { padding: 10px; width: 250px; border-radius: 8px; border: 1px solid #ccc; }
     button { padding: 10px 16px; border: none; background: #000; color: #fff; border-radius: 8px; cursor: pointer; }
     button:hover { background: #333; }
     #result { margin-top: 30px; }
-    img { border-radius: 50%; width: 120px; height: 120px; object-fit: cover; }
+    img { border-radius: 50%; width: 120px; height: 120px; object-fit: cover; margin-top: 20px; }
   </style>
 </head>
 <body>
-  <h2>🔍 Tra cứu thông tin TikTok</h2>
+  <h2>🔍 Tra cứu TikTok</h2>
   <p>Nhập username TikTok (ví dụ: <b>oanhl5058</b>)</p>
 
   <input id="username" placeholder="Nhập username..." />
@@ -22,28 +22,32 @@
   <div id="result"></div>
 
   <script>
-    const WORKER_URL = "https://patient-tree-0be5.son92qb.workers.dev"; // 🔹 Thay bằng URL Worker của bạn
-
     async function getInfo() {
       const username = document.getElementById("username").value.trim();
       if (!username) return alert("Vui lòng nhập username!");
       document.getElementById("result").innerHTML = "⏳ Đang lấy dữ liệu...";
 
+      const WORKER_URL = "https://patient-tree-0be5.son92qb.workers.dev"; // <-- Thay bằng URL Worker thật của bạn
+
       try {
-        const res = await fetch(`${WORKER_URL}?username=${encodeURIComponent(username)}`);
+        const res = await fetch(`${WORKER_URL}/?username=${username}`);
+        if (!res.ok) throw new Error("Worker trả về lỗi");
+
         const data = await res.json();
 
-        if (!data || data.status !== "success") {
-          document.getElementById("result").innerHTML = "⚠️ Không lấy được dữ liệu, vui lòng thử lại!";
+        if (data.status !== "success" || !data.userInfo || !data.userInfo.user) {
+          document.getElementById("result").innerHTML = "❌ Không lấy được dữ liệu!";
           return;
         }
 
         const user = data.userInfo.user;
+        const stats = data.userInfo.statsV2;
+
         document.getElementById("result").innerHTML = `
-          <img src="${user.avatarMedium}" alt="avatar"><br>
+          <img src="${user.avatarMedium}" alt="avatar">
           <h3>${user.nickname}</h3>
           <p>@${user.uniqueId}</p>
-          <p>👥 Followers: <b>${Number(user.stats.followerCount).toLocaleString()}</b></p>
+          <p>👥 Followers: <b>${Number(stats.followerCount).toLocaleString()}</b></p>
         `;
       } catch (e) {
         console.error(e);
@@ -53,4 +57,3 @@
   </script>
 </body>
 </html>
-
